@@ -166,6 +166,34 @@ drawCanvas.addEventListener('mouseup', function(event) {
 	pixels = {};
 });
 
+drawCanvas.addEventListener('touchstart', function(event) {
+	mouseDown = true
+	pixels[pixelNum] = {
+		x : event.offsetX,
+		y : event.offsetY};
+	drawPixel(pixels[pixelNum]);
+	pixelNum++;
+});
+
+drawCanvas.addEventListener('touchmove', function(event) {
+	if (mouseDown == true){
+		pixels[pixelNum] = {
+		x : event.offsetX,
+		y : event.offsetY};
+//	drawLine(pixels[pixelNum - 1], pixels[pixelNum]);
+	drawPixel(pixels[pixelNum]);
+	pixelNum++;
+	};
+});
+
+drawCanvas.addEventListener('touchend', function(event) {
+	mouseDown = false
+	pixelNum = 0;
+	//socket.emit("join-room", ROOM_ID, id, user);
+	socket.emit("pixels", pixels);
+	pixels = {};
+});
+
 ////////////////////////////////////////////////////////////////////////
 
 stopVideo.addEventListener("click", () => {
