@@ -137,6 +137,9 @@ var touch_mouseDown = false
 var touch_pixels = {};
 var touch_pixelNum = 0;
 
+var offsetX = drawCanvas.getBoundingClientRect().left;
+var offsetY = drawCanvas.getBoundingClientRect().top;
+
 socket.on("log", function(data) {
     console.log(data);
 });
@@ -144,8 +147,8 @@ socket.on("log", function(data) {
 drawCanvas.addEventListener('mousedown', function(event) {
 	mouseDown = true
 	pixels[pixelNum] = {
-		x : event.screenX,
-		y : event.screenY};
+		x : event.offsetX,
+		y : event.offsetY};
 	drawPixel(pixels[pixelNum]);
 	pixelNum++;
 });
@@ -153,8 +156,8 @@ drawCanvas.addEventListener('mousedown', function(event) {
 drawCanvas.addEventListener('mousemove', function(event) {
 	if (mouseDown == true){
 		pixels[pixelNum] = {
-		x : event.screenX,
-		y : event.screenY};
+		x : event.offsetX,
+		y : event.offsetY};
 //	drawLine(pixels[pixelNum - 1], pixels[pixelNum]);
 	drawPixel(pixels[pixelNum]);
 	pixelNum++;
@@ -174,8 +177,8 @@ drawCanvas.addEventListener('touchstart', function(event) {
 	console.log("touchstart");
 	const touches = event.changedTouches;
 	touch_pixels[touch_pixelNum] = {
-		x : touches[0].pageX,
-		y : touches[0].pageY};
+		x : touches[0].pageX - offsetX,
+		y : touches[0].pageY - offsetY};
 	drawPixel(touch_pixels[touch_pixelNum]);
 	touch_pixelNum++;
 });
@@ -184,8 +187,8 @@ drawCanvas.addEventListener('touchmove', function(event) {
 	if (touch_mouseDown == true){
 	    const touches = event.changedTouches;
 		touch_pixels[touch_pixelNum] = {
-		x : touches[0].pageX,
-		y : touches[0].pageY};
+		x : touches[0].pageX - offsetX,
+		y : touches[0].pageY - offsetY};
 //	drawLine(pixels[pixelNum - 1], pixels[pixelNum]);
 	    drawPixel(touch_pixels[touch_pixelNum]);
 	    touch_pixelNum++;
