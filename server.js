@@ -26,17 +26,17 @@ app.get("/:room", (req, res) => {
 
 io.on("connection", (socket) => {
   socket.on("join-room", (roomId, userId, userName) => {
-    socket.join(roomId);
-    setTimeout(()=>{
-      socket.to(roomId).broadcast.emit("user-connected", userId);
-    }, 1000)
-    socket.on("message", (message) => {
-      io.to(roomId).emit("createMessage", message, userName);
-    });
-    socket.on("pixels", (data) => {
-	  io.to(roomId).emit("drawSegment", data)
-    });
-  });
-});
+            socket.join(roomId);
+            setTimeout(()=>{
+              socket.broadcast.to(roomId).emit("user-connected", userId);
+            }, 1000)
+            socket.on("message", (message) => {
+              io.to(roomId).emit("createMessage", message, userName);
+            });
+            socket.on("pixels", (data) => {
+              io.to(roomId).emit("drawSegment", data)
+            });
+      });
+ });
 
 server.listen(process.env.PORT || 3030);
