@@ -133,6 +133,9 @@ function drawPixel(pixel) {
 var mouseDown = false
 var pixels = {};
 var pixelNum = 0;
+var touch_mouseDown = false
+var touch_pixels = {};
+var touch_pixelNum = 0;
 
 socket.on("log", function(data) {
     console.log(data);
@@ -141,8 +144,8 @@ socket.on("log", function(data) {
 drawCanvas.addEventListener('mousedown', function(event) {
 	mouseDown = true
 	pixels[pixelNum] = {
-		x : event.offsetX,
-		y : event.offsetY};
+		x : event.screenX,
+		y : event.screenY};
 	drawPixel(pixels[pixelNum]);
 	pixelNum++;
 });
@@ -150,8 +153,8 @@ drawCanvas.addEventListener('mousedown', function(event) {
 drawCanvas.addEventListener('mousemove', function(event) {
 	if (mouseDown == true){
 		pixels[pixelNum] = {
-		x : event.offsetX,
-		y : event.offsetY};
+		x : event.screenX,
+		y : event.screenY};
 //	drawLine(pixels[pixelNum - 1], pixels[pixelNum]);
 	drawPixel(pixels[pixelNum]);
 	pixelNum++;
@@ -167,31 +170,34 @@ drawCanvas.addEventListener('mouseup', function(event) {
 });
 
 drawCanvas.addEventListener('touchstart', function(event) {
-	mouseDown = true
-	pixels[pixelNum] = {
-		x : event.offsetX,
-		y : event.offsetY};
-	drawPixel(pixels[pixelNum]);
-	pixelNum++;
+	touch_mouseDown = true
+	console.log("touchstart");
+	const touches = event.changedTouches;
+	touch_pixels[touch_pixelNum] = {
+		x : touches[0].pageX,
+		y : touches[0].pageY};
+	drawPixel(touch_pixels[touch_pixelNum]);
+	touch_pixelNum++;
 });
 
 drawCanvas.addEventListener('touchmove', function(event) {
-	if (mouseDown == true){
-		pixels[pixelNum] = {
-		x : event.offsetX,
-		y : event.offsetY};
+	if (touch_mouseDown == true){
+	    const touches = event.changedTouches;
+		touch_pixels[touch_pixelNum] = {
+		x : touches[0].pageX,
+		y : touches[0].pageY};
 //	drawLine(pixels[pixelNum - 1], pixels[pixelNum]);
-	drawPixel(pixels[pixelNum]);
-	pixelNum++;
+	    drawPixel(touch_pixels[touch_pixelNum]);
+	    touch_pixelNum++;
 	};
 });
 
 drawCanvas.addEventListener('touchend', function(event) {
-	mouseDown = false
-	pixelNum = 0;
+	touch_mouseDown = false
+	touch_pixelNum = 0;
 	//socket.emit("join-room", ROOM_ID, id, user);
-	socket.emit("pixels", pixels);
-	pixels = {};
+	socket.emit("pixels", touch_pixels);
+	touch_pixels = {};
 });
 
 ////////////////////////////////////////////////////////////////////////
@@ -229,7 +235,7 @@ socket.on("createMessage", (message, userName) => {
 });
 
 socket.on("drawSegment", function(pixels) {
-  console.log("drawSegment");
+  //console.log("drawSegment");
   for (var id in pixels) {
 	drawPixel(pixels[id]);
   }
