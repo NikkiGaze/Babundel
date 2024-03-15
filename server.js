@@ -1,6 +1,12 @@
 const express = require("express");
 const app = express();
-const server = require("http").Server(app);
+const https = require("https");
+const fs = require('fs');
+const options = {
+key: fs.readFileSync('key.pem'),
+cert: fs.readFileSync('cert.pem')
+};
+const server = https.createServer(options, app);
 const { v4: uuidv4 } = require("uuid");
 app.set("view engine", "ejs");
 const io = require("socket.io")(server, {
@@ -39,4 +45,4 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(process.env.PORT || 5000);
+server.listen(process.env.PORT || 3030);
